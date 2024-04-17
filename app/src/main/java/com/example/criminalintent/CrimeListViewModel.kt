@@ -35,6 +35,14 @@ class CrimeListViewModel : ViewModel() {
         }
     }
 
+    suspend fun addCrime(crime: Crime){
+        crimeRepository.addCrime(crime)
+    }
+
+    suspend fun deleteCrime(crime: Crime){
+        crimeRepository.deleteCrime(crime)
+    }
+
 //    suspend fun loadCrimes(): List<Crime>{
 ////        val result = mutableListOf<Crime>()
 ////        delay(5000)

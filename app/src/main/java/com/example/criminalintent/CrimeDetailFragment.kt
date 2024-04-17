@@ -1,25 +1,32 @@
 package com.example.criminalintent
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.criminalintent.databinding.FragmentCrimeDetailBinding
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.UUID
 import java.util.Date
+import android.text.format.DateFormat
 
 //private const val TAG = "CrimeDetailFragment"
+private const val DATE_FORMAT = "EEE, MMM, dd"
 class CrimeDetailFragment: Fragment() {
 
     private var _binding : FragmentCrimeDetailBinding? = null
@@ -55,9 +62,9 @@ class CrimeDetailFragment: Fragment() {
                 }
             }
 
-            crimeDate.apply {
-                isEnabled = false
-            }
+//            crimeDate.apply {
+//                isEnabled = false
+//            }
 
             crimeSolved.setOnCheckedChangeListener { _, isChecked ->
                 crimeDetailViewModel.updateCrime { oldCrime ->
@@ -72,6 +79,13 @@ class CrimeDetailFragment: Fragment() {
                     }
                 }
             }
+        }
+
+        setFragmentResultListener(
+            DatePickerFragment.REQUEST_KEY_DATE
+        ){ requestKey, bundle ->
+            val newDate = bundle.getSerializable(DatePickerFragment.BUNDLE_KEY_DATE) as Date
+            crimeDetailViewModel.updateCrime { it.copy(date = newDate) }
         }
     }
 
@@ -88,6 +102,59 @@ class CrimeDetailFragment: Fragment() {
 
             crimeDate.text = crime.date.toString()
             crimeSolved.isChecked = crime.isSolved
+            crimeDate.setOnClickListener{
+                findNavController().navigate(
+                    CrimeDetailFragmentDirections.selectDate(crime.date)
+                )
+            }
+
+            crimeReport.setOnClickListener{
+                val reportIntent = Intent(Intent.ACTION_SEND).apply{
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, getCrimeReport(crime))
+                    putExtra(
+                        Intent.EXTRA_SUBJECT,
+                        getString(R.string.crime_report_subject)
+                    )
+                }
+                //startActivity(reportIntent)
+                val chooserIntent = Intent.createChooser(
+                    reportIntent,
+                    getString(R.string.send_report)
+                )
+                startActivity(chooserIntent)
+            }
+
+            crimeDelete.setOnClickListener {
+                lifecycleScope.launch {
+                    crimeDetailViewModel.deleteCrime()
+                    findNavController().navigateUp()
+                }
+            }
         }
+    }
+
+    private fun getCrimeReport(crime: Crime): String{
+        val solvedString = if(crime.isSolved){
+            getString(R.string.crime_report_solved)
+        }else{
+            getString(R.string.crime_report_unsolved)
+        }
+
+        val dateString = DateFormat.format(DATE_FORMAT, crime.date).toString()
+
+        val suspectString = if(crime.suspect.isBlank()){
+            getString(R.string.crime_report_no_suspect)
+        }else{
+            getString(R.string.crime_report_suspect)
+        }
+
+        return getString(
+            R.string.crime_report,
+            crime.title,
+            dateString,
+            solvedString,
+            suspectString
+        )
     }
 }
