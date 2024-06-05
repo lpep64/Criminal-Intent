@@ -4,7 +4,7 @@ Welcome to Criminal Intent, my primary Android application developed as a part o
 
 ## Introduction
 
-Criminal Intent is a the primary task and acievment of
+CrimeTracker is a simple yet engaging Android application that serves as an excellent introductory project into the realm of mobile app development. Created in February 2024, this app showcases various fundamental concepts including database management, intent integration, RecyclerView implementation, interactable buttons, dynamic UI changes, ViewModel implementation, state management, and intent handling.
 
 ## Features
 
