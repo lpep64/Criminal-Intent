@@ -8,8 +8,11 @@ Criminal Intent is a the primary task and acievment of
 
 ## Features
 
+- **Database Management:** Enables users to maintain and manage records within the app database.
+- **Intent Integration:** Utilizes both implicit and explicit intents for enhanced functionality.
+- **RecyclerView Implementation:** Uses RecyclerView to organize and display database records.
 - **Interactable Buttons:** Users can interact with buttons to trigger different functionalities within the app.
-- **Dynamic Image/Text Changes:** The app demonstrates the capability to dynamically change images and text based on user interactions.
+- **Dynamic UI Changes:** Demonstrates the capability to dynamically change images and text based on user interactions.
 - **ViewModel Implementation:** Utilizes ViewModel architecture component to manage UI-related data in a lifecycle-conscious manner.
 - **State Management:** Handles state changes effectively to ensure smooth user experience throughout different stages of app usage.
 - **Intent Handling:** Demonstrates the ability to handle intents for various actions within the application.
